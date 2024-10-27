@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Address Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #d4dcda;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input {
+            margin: 5px 0;
+            padding: 10px;
+            width: 300px;
+        }
+        button {
+            padding: 10px;
+            cursor: pointer;
+        }
+        #addressList {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1> Welcome To My Personal Address Book</h1>
+
+<form id="addressForm">
+    <input type="text" id="name" placeholder="Name" required>
+    <input type="text" id="address" placeholder="Address" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <button type="submit">Add/Update</button>
+</form>
+
+<div id="addressList"></div>
+
+<script>
+    let addressBook = [];
+
+    function renderAddressList() {
+        const addressListDiv = document.getElementById('addressList');
+        addressListDiv.innerHTML = '<h2>Address List</h2>';
+        addressBook.forEach((entry, index) => {
+            addressListDiv.innerHTML += `
+                <div>
+                    <strong>${entry.name}</strong><br>
+                    ${entry.address}<br>
+                    ${entry.email}<br>
+                    ${entry.phone}<br>
+                    <button onclick="editEntry(${index})">Edit</button>
+                </div><hr>
+            `;
+        });
+    }
+
+    function editEntry(index) {
+        const entry = addressBook[index];
+        document.getElementById('name').value = entry.name;
+        document.getElementById('address').value = entry.address;
+        document.getElementById('email').value = entry.email;
+        document.getElementById('phone').value = entry.phone;
+
+        document.getElementById('addressForm').onsubmit = function(event) {
+            event.preventDefault();
+            addressBook[index] = {
+                name: document.getElementById('name').value,
+                address: document.getElementById('address').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value
+            };
+            renderAddressList();
+            this.reset();
+            this.onsubmit = addEntry;
+        };
+    }
+
+    function addEntry(event) {
+        event.preventDefault();
+        addressBook.push({
+            name: document.getElementById('name').value,
+            address: document.getElementById('address').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value
+        });
+        renderAddressList();
+        this.reset();
+    }
+
+    document.getElementById('addressForm').onsubmit = addEntry;
+
+    // Pre-fill the address book with sample data
+    addressBook = [
+        {name: "John Doe", address: "123 Elm St", email: "john@email.com", phone: "555-1234"},
+        {name: "Jane Smith", address: "456 Oak St", email: "jane@email.com", phone: "555-5678"},
+        // Add 8 more sample entries
+    ];
+
+    renderAddressList();
+</script>
+
+</body>
+</html>
